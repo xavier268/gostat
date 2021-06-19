@@ -91,8 +91,8 @@ func (s *Stat) add(d float64) {
 		return
 	}
 
-	fmt.Println(s)
-	fmt.Println("Merge required")
+	//fmt.Println(s)
+	//fmt.Println("Merge required")
 
 	// Here, we have too many buckets - we select the most attractive merge move and do it !
 	bi := 0            // best move index so far
@@ -106,6 +106,6 @@ func (s *Stat) add(d float64) {
 	// do the "best move"
 	fmt.Println("Merging buckets :", bi, " and ", bi+1)
 	s.bkts = s.bkts.merge(bi)
-	fmt.Println(s)
+	//fmt.Println(s)
 	// Done !
 }
