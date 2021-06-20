@@ -19,14 +19,29 @@ func TestDump(t *testing.T) {
 		// fmt.Println(s)
 	}
 	fmt.Println(s)
+}
 
+func BenchmarkAdd0(b *testing.B) {
+	s := New(20)
+	b.ResetTimer()
+	for i := 0.; i < float64(b.N); i++ {
+		s.add(i)
+	}
+}
+
+func BenchmarkAdd1(b *testing.B) {
+	s := New(20)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		s.Add(i)
+	}
 }
 
 func TestDist1(t *testing.T) {
 	fmt.Println("Uniform distribution")
 	s := New(20)
 	for i := 0; i < 10_000; i++ {
-		s.Add(rand.Float64() * 1000.)
+		s.Add(rand.Float64())
 	}
 	fmt.Println(s)
 }
