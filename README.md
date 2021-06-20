@@ -1,5 +1,5 @@
 # gostat
-Golang librairy create easy statistics on the console.
+A Golang librairy to easily extract statistical information from a stream of scalar data.
 
 ## Design objectives 
 
