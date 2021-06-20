@@ -14,11 +14,11 @@ type bucket struct {
 }
 
 func (b bucket) Header() string {
-	return "[ From\t\tCenter\t\tTO\t  ]  =>\t   n\tdensity\t\twidth\t\tsurface(n*w)\t"
+	return "[ From\t\tCenter\t\tTO\t  ]  =>\t n\t   mean\t\t  sigma\t\t  density\t   width\tsurface(n*w)\t"
 }
 
 func (b *bucket) String() string {
-	return fmt.Sprintf("[%10.3f\t%10.3f\t%10.3f]  =>  %d\t%10.3f\t%10.3f\t%10.1f", b.low(), b.c, b.high(), b.n, b.density(), b.w, float64(b.n)*b.w)
+	return fmt.Sprintf("[%10.3f\t%10.3f\t%10.3f]  =>  %d\t%10.3f\t%10.3f\t%10.3f\t%10.3f\t%10.1f", b.low(), b.c, b.high(), b.n, b.mean(), b.sigma(), b.density(), b.w, float64(b.n)*b.w)
 }
 
 func (b *bucket) add(data float64) {
@@ -42,12 +42,38 @@ func (b bucket) density() float64 {
 		return 0.
 	}
 	return float64(b.n) / b.w
+}
 
+func (b bucket) mean() float64 {
+	return b.sum / float64(b.n)
+}
+
+func (b bucket) sigma() float64 {
+	return b.sum2/float64(b.n) - b.mean()*b.mean()
 }
 
 // test if data can fit in this bucket ?
 func (b bucket) contains(d float64) bool {
 	return (d >= b.low() && d <= b.high())
+}
+
+// NRepart gives an estimate f the number of data points that are below x (special rounding  for x = c), assuming a GAUSSIAN NORMAL law.
+func (b bucket) NRepart(x float64) float64 {
+
+	if b.w == 0 { // dirac distribution ...
+		if x > b.c { // here, b.c == b.mean() ...
+			return float64(b.n)
+		}
+		if x == b.c {
+			return float64(b.n) / 2.
+		}
+		if x < b.c {
+			return 0.
+		}
+	}
+
+	// Otherwise, assume a normal distribution with given mean and sigma
+	return float64(b.n) * PHI((x-b.mean())/b.sigma())
 }
 
 // =======================================

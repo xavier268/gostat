@@ -110,3 +110,28 @@ func (s *Stat) add(d float64) {
 	//fmt.Println(s)
 	// Done !
 }
+
+// Collect collects aggregated data : count, mean, variance
+func (s *Stat) Collect() (int, float64, float64) {
+	var m, v float64
+	var n int
+
+	for _, b := range s.bkts {
+		m += b.sum
+		v += b.sum2
+		n += b.n
+	}
+	m = m / float64(n)
+	v = v/float64(n-1) - m*m
+	return n, m, v
+}
+
+// NRepart gives an estimate f the number of data points that are below x (special rounding  for x = c), assuming NORMAL GAUSSIAN law.
+func (s *Stat) NRepart(x float64) float64 {
+	var res float64
+
+	for _, b := range s.bkts {
+		res += b.NRepart(x)
+	}
+	return res
+}

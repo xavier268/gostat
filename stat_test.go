@@ -65,3 +65,26 @@ func TestDist3(t *testing.T) {
 	}
 	fmt.Println(s)
 }
+
+func TestRepartNormal(t *testing.T) {
+	s := New(10)
+	for i := 0; i < 100; i++ {
+		s.Add(200. + 60.*rand.NormFloat64())
+	}
+	fmt.Println(s)
+
+	for i := -1000.; i < 1000.; i += 20 {
+		fmt.Printf("%5f\t==REPART==>\t%5f\n", i, s.NRepart(i))
+	}
+}
+func TestRepartUniform(t *testing.T) {
+	s := New(10)
+	for i := 0; i < 100; i++ {
+		s.Add(200. + 60.*float64(i))
+	}
+	fmt.Println(s)
+
+	for i := -1000.; i < 1000.; i += 20 {
+		fmt.Printf("%5f\t==REPART==>\t%5f\n", i, s.NRepart(i))
+	}
+}
