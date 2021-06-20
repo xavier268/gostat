@@ -13,8 +13,12 @@ type bucket struct {
 	n int
 }
 
+func (b bucket) Header() string {
+	return "[ From\t\tCenter\t\tTO\t  ]  =>\t   n\tdensity\t\twidth\t\tsurface(n*w)\t"
+}
+
 func (b *bucket) String() string {
-	return fmt.Sprintf("[%10.3f\t%10.3f\t%10.3f]  =>  %d", b.low(), b.c, b.high(), b.n)
+	return fmt.Sprintf("[%10.3f\t%10.3f\t%10.3f]  =>  %d\t%10.3f\t%10.3f\t%10.1f", b.low(), b.c, b.high(), b.n, b.density(), b.w, float64(b.n)*b.w)
 }
 
 func (b *bucket) add(data float64) {
@@ -31,6 +35,14 @@ func (b bucket) low() float64 {
 // high is higher limit
 func (b bucket) high() float64 {
 	return b.c + b.w/2.
+}
+
+func (b bucket) density() float64 {
+	if b.w == 0. {
+		return 0.
+	}
+	return float64(b.n) / b.w
+
 }
 
 // test if data can fit in this bucket ?

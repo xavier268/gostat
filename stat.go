@@ -16,7 +16,7 @@ type Stat struct {
 func New(precision int) *Stat {
 	s := new(Stat)
 	s.nbkt = precision
-	s.bkts = make([]bucket, 0, s.nbkt) // prepare capacity for performance
+	s.bkts = make([]bucket, 0, s.nbkt+1) // prepare capacity for performance
 	return s
 }
 
@@ -25,6 +25,7 @@ func (s *Stat) String() string {
 	var sb strings.Builder
 
 	fmt.Fprintf(&sb, "Bucket dump (%d / %dbuckets)\n", s.bkts.Len(), s.nbkt)
+	fmt.Fprintf(&sb, "\t%s\n", bucket{}.Header())
 	for i, b := range s.bkts {
 		fmt.Fprintf(&sb, "%d\t%s\n", i, b.String())
 	}
@@ -87,7 +88,7 @@ func (s *Stat) add(d float64) {
 	sort.Sort(s.bkts)
 
 	// if bucket count is still reasonably low, we're done !
-	if s.bkts.Len() < s.nbkt {
+	if s.bkts.Len() <= s.nbkt {
 		return
 	}
 
@@ -104,7 +105,7 @@ func (s *Stat) add(d float64) {
 		}
 	}
 	// do the "best move"
-	fmt.Println("Merging buckets :", bi, " and ", bi+1)
+	// fmt.Println("Merging buckets :", bi, " and ", bi+1)
 	s.bkts = s.bkts.merge(bi)
 	//fmt.Println(s)
 	// Done !
