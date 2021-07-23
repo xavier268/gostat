@@ -9,5 +9,5 @@ A Golang librairy to easily extract statistical information from a stream of sca
 * all operations in bounded time                            ->  OK 
 * bounded memory footprint                                  ->  OK 
 * provide exact mean, variance, min, max, count             ->  OK
-* provide reasonable estimates for mode, quartile, median   ->  TO DO 
+* provide reasonable estimates for mode, quartile, median   ->  TO DO (first, work on a "percentile" function)
 * display histogram of values on console                    ->  TO DO 

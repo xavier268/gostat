@@ -73,8 +73,15 @@ func (b bucket) NRepart(x float64) float64 {
 		return float64(b.n) / 2.
 	}
 
-	// Otherwise, assume a normal distribution with given mean and sigma, normalize to account for the fact we are using a truncated normal laxw.
-	return float64(b.n) * PHI2(b.low()/b.sigma(), x/b.sigma()) / PHI2(b.low()/b.sigma(), b.high()/b.sigma())
+	// Otherwise, assume a normal distribution with given mean and sigma,
+	// and normalize to account for the fact we are using a truncated normal law.
+	return float64(b.n) *
+		PHI2(
+			(b.low()-b.mean())/b.sigma(),
+			(x-b.mean())/b.sigma()) /
+		PHI2(
+			(b.low()-b.mean())/b.sigma(),
+			(b.high()-b.mean())/b.sigma())
 }
 
 // =======================================
