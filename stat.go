@@ -8,7 +8,7 @@ import (
 )
 
 type Stat struct {
-	bkts buckets // bucket currently filled, ORDERED. Buckets are never empty. Their limit must NEVER touch.
+	bkts buckets // bucket currently filled, always ORDERED. Buckets are never empty. Their limit must NEVER touch and they should never overlap.
 	nbkt int     // expected number of buckets
 }
 
@@ -25,6 +25,9 @@ func (s *Stat) String() string {
 	var sb strings.Builder
 
 	fmt.Fprintf(&sb, "Bucket dump (%d / %dbuckets)\n", s.bkts.Len(), s.nbkt)
+	c, m, v := s.CountMeanVar()
+	fmt.Fprintf(&sb, "Count\t%d\nMean\t%f \nVar\t%f \n", c, m, v)
+	fmt.Fprintf(&sb, "Min\t%f\nMax\t%f \n", s.Min(), s.Max())
 	fmt.Fprintf(&sb, "\t%s\n", bucket{}.Header())
 	for i, b := range s.bkts {
 		fmt.Fprintf(&sb, "%d\t%s\n", i, b.String())
@@ -111,8 +114,8 @@ func (s *Stat) add(d float64) {
 	// Done !
 }
 
-// Collect collects aggregated data : count, mean, variance
-func (s *Stat) Collect() (int, float64, float64) {
+// CountMeanVar provides exact values for count, mean, variance - more efficient by calculating all values at once.
+func (s *Stat) CountMeanVar() (int, float64, float64) {
 	var m, v float64
 	var n int
 
@@ -126,7 +129,27 @@ func (s *Stat) Collect() (int, float64, float64) {
 	return n, m, v
 }
 
-// NRepart gives an estimate f the number of data points that are below x (special rounding  for x = c), assuming NORMAL GAUSSIAN law.
+// Count provides exact values for count
+func (s *Stat) Count() int {
+
+	var n int
+	for _, b := range s.bkts {
+		n += b.n
+	}
+	return n
+}
+
+// Min provides exact minimum value
+func (s *Stat) Min() float64 {
+	return s.bkts[0].low()
+}
+
+// Min provides exact maximum value
+func (s *Stat) Max() float64 {
+	return s.bkts[len(s.bkts)-1].high()
+}
+
+// NRepart gives an estimate f the number of data points that are below x (special rounding  for x = c), assuming  GAUSSIAN law.
 func (s *Stat) NRepart(x float64) float64 {
 	var res float64
 
@@ -134,4 +157,17 @@ func (s *Stat) NRepart(x float64) float64 {
 		res += b.NRepart(x)
 	}
 	return res
+}
+
+// Percentile provides the value such that p percent of the value are below, and 1-P and above.
+func (s *Stat) Percentile(p float64) float64 {
+
+	if p < .0 || p > 1.0 {
+		panic("Invalid input")
+	}
+
+	// TOD0 - idea is to first locate the bucket that contanins the value,
+	// then solve using NPart to find the exact percentile.
+
+	panic("Not implemented")
 }
