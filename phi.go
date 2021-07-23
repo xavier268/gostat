@@ -30,3 +30,12 @@ func PHI(x float64) float64 {
 	}
 	return 0.5 + s*math.Exp(-0.5*q-0.91893853320467274178)
 }
+
+// PHI2 provide the measure between values x and y
+// result is always positive.
+func PHI2(x, y float64) float64 {
+	if y < x {
+		x, y = y, x
+	}
+	return PHI(y) - PHI(x)
+}

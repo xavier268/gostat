@@ -60,20 +60,21 @@ func (b bucket) contains(d float64) bool {
 // NRepart gives an estimate f the number of data points that are below x (special rounding  for x = c), assuming a GAUSSIAN NORMAL law.
 func (b bucket) NRepart(x float64) float64 {
 
-	if b.w == 0 { // dirac distribution ...
-		if x > b.c { // here, b.c == b.mean() ...
-			return float64(b.n)
-		}
-		if x == b.c {
-			return float64(b.n) / 2.
-		}
-		if x < b.c {
-			return 0.
-		}
+	if x < b.low() {
+		return .0
 	}
 
-	// Otherwise, assume a normal distribution with given mean and sigma
-	return float64(b.n) * PHI((x-b.mean())/b.sigma())
+	if x > b.high() {
+		return float64(b.n)
+	}
+
+	// special case for dirac distribution
+	if b.w == 0 && x == b.c {
+		return float64(b.n) / 2.
+	}
+
+	// Otherwise, assume a normal distribution with given mean and sigma, normalize to account for the fact we are using a truncated normal laxw.
+	return float64(b.n) * PHI2(b.low()/b.sigma(), x/b.sigma()) / PHI2(b.low()/b.sigma(), b.high()/b.sigma())
 }
 
 // =======================================
@@ -87,7 +88,6 @@ func (bb buckets) Less(i, j int) bool { return bb[i].c < bb[j].c }
 
 // eval evaluate the cost of merging i with i+1.
 // Cost should be minimum.
-// TODO allow for different eval startégies ...
 func (bb buckets) eval(i int) float64 {
 	w1, w2 := bb[i].w, bb[i+1].w
 	w := bb[i+1].high() - bb[i].low()

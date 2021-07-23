@@ -28,3 +28,14 @@ func TestPhi(t *testing.T) {
 		}
 	}
 }
+
+func TestPHI2(t *testing.T) {
+	x, y := 0.2, 0.845
+	if PHI2(x, y) != PHI2(y, x) {
+		t.Fatal("PHI2 should be symetric")
+	}
+	if PHI2(x, y) <= 0 || PHI2(y, x) <= 0 {
+		t.Fatal("PHI2 should be strictly positive !")
+	}
+	fmt.Println(PHI2(x, y), PHI2(y, x))
+}
