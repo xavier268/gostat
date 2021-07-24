@@ -54,6 +54,11 @@ func TestDist2(t *testing.T) {
 		s.Add(rand.Float64() * 10000.)
 	}
 	fmt.Println(s)
+
+	c, _, _ := s.CountMeanVar()
+	if c != s.Count() {
+		t.Fatal("Direct count not providing same result as combined count")
+	}
 }
 
 func TestDist3(t *testing.T) {
