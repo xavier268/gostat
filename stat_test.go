@@ -12,7 +12,7 @@ func TestDump(t *testing.T) {
 	data := []int{2, 5, 4, 7, 1, 6, 1, 4, 4, 4, 2, -20, 40, -50, 100, -70}
 	fmt.Println("Input is : ", data)
 
-	s := New(10)
+	s := NewStat(10)
 	// fmt.Println(s)
 	for _, i := range data {
 		s.Add(i)
@@ -22,7 +22,7 @@ func TestDump(t *testing.T) {
 }
 
 func BenchmarkAdd0(b *testing.B) {
-	s := New(20)
+	s := NewStat(20)
 	b.ResetTimer()
 	for i := 0.; i < float64(b.N); i++ {
 		s.add(i)
@@ -30,7 +30,7 @@ func BenchmarkAdd0(b *testing.B) {
 }
 
 func BenchmarkAdd1(b *testing.B) {
-	s := New(20)
+	s := NewStat(20)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		s.Add(i)
@@ -39,7 +39,7 @@ func BenchmarkAdd1(b *testing.B) {
 
 func TestDist1(t *testing.T) {
 	fmt.Println("Uniform distribution")
-	s := New(20)
+	s := NewStat(20)
 	for i := 0; i < 10_000; i++ {
 		s.Add(rand.Float64())
 	}
@@ -48,7 +48,7 @@ func TestDist1(t *testing.T) {
 
 func TestDist2(t *testing.T) {
 	fmt.Println("Two separate uniform distribution")
-	s := New(30)
+	s := NewStat(30)
 	for i := 0; i < 10_000; i++ {
 		s.Add(rand.Float64()*1000. - 5000.)
 		s.Add(rand.Float64() * 10000.)
@@ -58,7 +58,7 @@ func TestDist2(t *testing.T) {
 
 func TestDist3(t *testing.T) {
 	fmt.Println("Skewd distribution")
-	s := New(30)
+	s := NewStat(30)
 	for i := 0; i < 100_000; i++ {
 		s.Add(-math.Log(1 - rand.Float64()))
 
@@ -67,7 +67,7 @@ func TestDist3(t *testing.T) {
 }
 
 func TestRepartNormal(t *testing.T) {
-	s := New(10)
+	s := NewStat(10)
 	for i := 0; i < 100; i++ {
 		s.Add(200. + 60.*rand.NormFloat64())
 	}
@@ -78,7 +78,7 @@ func TestRepartNormal(t *testing.T) {
 	}
 }
 func TestRepartUniform(t *testing.T) {
-	s := New(10)
+	s := NewStat(10)
 	for i := 0; i < 100; i++ {
 		s.Add(200. + 60.*float64(i))
 	}

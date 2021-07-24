@@ -12,8 +12,8 @@ type Stat struct {
 	nbkt int     // expected number of buckets
 }
 
-// New with specified number of internal buckets
-func New(precision int) *Stat {
+// NewStat with specified number of internal buckets
+func NewStat(precision int) *Stat {
 	s := new(Stat)
 	s.nbkt = precision
 	s.bkts = make([]bucket, 0, s.nbkt+1) // prepare capacity for performance
